@@ -15,4 +15,4 @@ GET http://localhost:8080/api/users
 ###
 
 ### Buscar usuário pelo ID (substitua o 1 pelo ID desejado se necessário)
-GET http://localhost:8080/api/users/1
+GET http://localhost:8080/api/users/j

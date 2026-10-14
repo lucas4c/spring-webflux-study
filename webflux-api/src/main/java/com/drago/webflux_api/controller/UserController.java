@@ -1,7 +1,9 @@
 package com.drago.webflux_api.controller;
 
-import com.drago.webflux_api.model.User;
+import com.drago.webflux_api.dto.UserRequestDTO;
+import com.drago.webflux_api.dto.UserResponseDTO;
 import com.drago.webflux_api.service.UserService;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
@@ -18,18 +20,19 @@ public class UserController {
     }
 
     @GetMapping
-    public Flux<User> getAllUsers() {
+    public Flux<UserResponseDTO> getAllUsers() {
         return userService.findAll();
     }
 
     @GetMapping("/{id}")
-    public Mono<User> getUserById(@PathVariable Long id) {
+    public Mono<UserResponseDTO> getUserById(@PathVariable Long id) {
         return userService.findById(id);
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Mono<User> createUser(@RequestBody User user) {
-        return userService.save(user);
+    // O @Valid aciona as validações criadas no UserRequestDTO
+    public Mono<UserResponseDTO> createUser(@Valid @RequestBody UserRequestDTO userDTO) {
+        return userService.save(userDTO);
     }
 }

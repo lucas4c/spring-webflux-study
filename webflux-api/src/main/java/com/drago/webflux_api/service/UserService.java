@@ -1,5 +1,8 @@
 package com.drago.webflux_api.service;
 
+import com.drago.webflux_api.dto.UserRequestDTO;
+import com.drago.webflux_api.dto.UserResponseDTO;
+import com.drago.webflux_api.exception.UserNotFoundException;
 import com.drago.webflux_api.model.User;
 import com.drago.webflux_api.repository.UserRepository;
 import org.springframework.stereotype.Service;
@@ -15,17 +18,23 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
-    public Flux<User> findAll() {
-        return userRepository.findAll();
+    public Flux<UserResponseDTO> findAll() {
+        return userRepository.findAll().map(this::toResponseDTO);
     }
 
-    public Mono<User> findById(Long id) {
-        return userRepository.findById(id);
+    public Mono<UserResponseDTO> findById(Long id) {
+        return userRepository.findById(id)
+            .switchIfEmpty(Mono.error(new UserNotFoundException(id))) // Aqui lançamos o erro que será capturado pelo ExceptionHandler!
+            .map(this::toResponseDTO);
     }
 
-    public Mono<User> save(User user) {
-        // Aqui você poderia adicionar regras de negócio, 
-        // como verificar se o email já existe, antes de salvar.
-        return userRepository.save(user);
+    public Mono<UserResponseDTO> save(UserRequestDTO dto) {
+        User user = new User(dto.name(), dto.email());
+        return userRepository.save(user).map(this::toResponseDTO);
+    }
+
+    // Métodos auxiliares de mapeamento (Abstração limpa)
+    private UserResponseDTO toResponseDTO(User user) {
+        return new UserResponseDTO(user.getId(), user.getName(), user.getEmail(), user.getCreatedAt());
     }
 }
