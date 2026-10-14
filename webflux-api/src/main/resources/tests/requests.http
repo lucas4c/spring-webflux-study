@@ -1,18 +1,33 @@
-### Criar um usuário
+### 1. Criar um usuário (Público)
 POST http://localhost:8080/api/users
 Content-Type: application/json
 
 {
-  "name": "Guina",
-  "email": "guinaolegal@example.com"
+  "name": "Administrador",
+  "email": "admin@empresa.com",
+  "password": "senha-super-segura"
 }
 
-###
+### 2. Login (Público) - Pega o Token
+# @name loginRequest
+POST http://localhost:8080/api/auth/login
+Content-Type: application/json
 
-### Listar todos os usuários
+{
+  "email": "admin@empresa.com",
+  "password": "senha-super-segura"
+}
+
+### 3. Extrair o token para uma variável (Automático)
+@authToken = {{loginRequest.response.body.token}}
+
+### 4. Buscar todos os usuários (Protegido)
+# Tente rodar isso SEM rodar o login antes para ver o 401 Unauthorized.
+# Depois rode o login e rode isso de novo.
 GET http://localhost:8080/api/users
+Authorization: Bearer {{authToken}}
 
-###
-
-### Buscar usuário pelo ID (substitua o 1 pelo ID desejado se necessário)
-GET http://localhost:8080/api/users/j
+### 5. Estourar o Rate Limiting (Protegido)
+# Clique neste 'Send Request' umas 6 vezes bem rápido!
+GET http://localhost:8080/api/users
+Authorization: Bearer {{authToken}}

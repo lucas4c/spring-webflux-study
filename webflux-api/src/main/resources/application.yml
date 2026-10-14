@@ -1,6 +1,11 @@
 spring:
   application:
     name: webflux-api
+  # Adicione o bloco do Redis:
+  data:
+    redis:
+      host: localhost
+      port: 6379
   
   r2dbc:
     url: r2dbc:postgresql://localhost:5432/webflux_db

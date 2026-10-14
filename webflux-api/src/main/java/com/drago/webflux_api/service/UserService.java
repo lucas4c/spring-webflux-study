@@ -5,6 +5,10 @@ import com.drago.webflux_api.dto.UserResponseDTO;
 import com.drago.webflux_api.exception.UserNotFoundException;
 import com.drago.webflux_api.model.User;
 import com.drago.webflux_api.repository.UserRepository;
+
+import io.jsonwebtoken.security.Password;
+
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -13,9 +17,11 @@ import reactor.core.publisher.Mono;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     public Flux<UserResponseDTO> findAll() {
@@ -29,7 +35,8 @@ public class UserService {
     }
 
     public Mono<UserResponseDTO> save(UserRequestDTO dto) {
-        User user = new User(dto.name(), dto.email());
+        String encodedPassword = passwordEncoder.encode(dto.password());
+        User user = new User(dto.name(), dto.email(), encodedPassword);
         return userRepository.save(user).map(this::toResponseDTO);
     }
 

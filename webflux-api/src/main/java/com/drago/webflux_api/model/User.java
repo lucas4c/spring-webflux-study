@@ -11,14 +11,18 @@ public class User {
     private Long id;
     private String name;
     private String email;
+    private String password;
+    private String role;
     private LocalDateTime createdAt;
 
     // Construtores, Getters e Setters (se não estiver usando Lombok)
     public User() {}
 
-    public User(String name, String email) {
+    public User(String name, String email, String password) {
         this.name = name;
         this.email = email;
+        this.password = password;
+        this.role = "ROLE_USER";
         this.createdAt = LocalDateTime.now();
     }
 
@@ -30,6 +34,12 @@ public class User {
     
     public String getEmail() { return email; }
     public void setEmail(String email) { this.email = email; }
+
+    public String getPassword() { return password; }
+    public void setPassword(String password) { this.password = password; }
+
+    public String getRole() { return role; }
+    public void setRole(String role) { this.role = role; }
     
     public LocalDateTime getCreatedAt() { return createdAt; }
     public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
