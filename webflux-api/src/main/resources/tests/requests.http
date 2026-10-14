@@ -1,0 +1,18 @@
+### Criar um usuário
+POST http://localhost:8080/api/users
+Content-Type: application/json
+
+{
+  "name": "Guina",
+  "email": "guinaolegal@example.com"
+}
+
+###
+
+### Listar todos os usuários
+GET http://localhost:8080/api/users
+
+###
+
+### Buscar usuário pelo ID (substitua o 1 pelo ID desejado se necessário)
+GET http://localhost:8080/api/users/1

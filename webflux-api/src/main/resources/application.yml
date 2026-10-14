@@ -1,0 +1,22 @@
+spring:
+  application:
+    name: webflux-api
+  
+  r2dbc:
+    url: r2dbc:postgresql://localhost:5432/webflux_db
+    username: admin
+    password: admin_password
+    pool:
+      initial-size: 5
+      max-size: 20
+    # Configuração correta para o spring.r2dbc...
+    show-sql: true
+
+  # sql precisa estar dentro de spring
+  sql:
+    init:
+      mode: always
+  
+logging:
+  level:
+    org.springframework.r2dbc: DEBUG
