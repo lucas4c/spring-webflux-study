@@ -9,6 +9,7 @@ import org.springframework.web.server.WebFilterChain;
 import reactor.core.publisher.Mono;
 
 import java.time.Duration;
+import java.net.InetSocketAddress;
 
 @Component
 public class RateLimitFilter implements WebFilter {
@@ -22,19 +23,23 @@ public class RateLimitFilter implements WebFilter {
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
-        // Usa o IP como chave no Redis
-        String ip = exchange.getRequest().getRemoteAddress().getAddress().getHostAddress();
+        InetSocketAddress remoteAddress = exchange.getRequest().getRemoteAddress();
+        
+        // Se for chamada de teste onde o RemoteAddress é null, pula o rate limit
+        if (remoteAddress == null || remoteAddress.getAddress() == null) {
+            return chain.filter(exchange);
+        }
+
+        String ip = remoteAddress.getAddress().getHostAddress();
         String redisKey = "rate_limit:" + ip;
 
         return redisTemplate.opsForValue().increment(redisKey)
             .flatMap(requestCount -> {
                 if (requestCount == 1) {
-                    // Se for a primeira request, expira a chave em 60 segundos
                     return redisTemplate.expire(redisKey, Duration.ofMinutes(1))
                             .then(chain.filter(exchange));
                 }
                 if (requestCount > MAX_REQUESTS_PER_MINUTE) {
-                    // Se passar do limite, bloqueia com HTTP 429
                     exchange.getResponse().setStatusCode(HttpStatus.TOO_MANY_REQUESTS);
                     return exchange.getResponse().setComplete();
                 }
