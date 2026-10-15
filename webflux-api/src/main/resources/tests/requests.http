@@ -3,9 +3,9 @@ POST http://localhost:8080/api/users
 Content-Type: application/json
 
 {
-  "name": "Administrador",
-  "email": "admin@empresa.com",
-  "password": "senha-super-segura"
+  "name": "34334343",
+  "email": "baquesdfsdfsdflocurameo@empresa2.com",
+  "password": "senha-super-segura-1234"
 }
 
 ### 2. Login (Público) - Pega o Token
