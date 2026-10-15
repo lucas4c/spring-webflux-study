@@ -36,8 +36,8 @@ A aplicação adota um modelo de programação não-bloqueante (baseado em React
 ---
 
 ## 📊 Estrutura do Repositório
-* `src/main/java/com/drago/webflux_api/controller` — Endpoints REST reativos documentados.
-* `src/main/java/com/drago/webflux_api/service` — Regras de negócio reativas (`Mono`/`Flux`).
+* `src/main/java/com/drago/webflux_api/controller` — Endpoints REST.
+* `src/main/java/com/drago/webflux_api/service` — Regras de negócio.
 * `src/main/java/com/drago/webflux_api/repository` — Repositórios reativos baseados em R2DBC.
 * `src/main/java/com/drago/webflux_api/security` — Configuração de segurança JWT e Filtros de Rate Limiting.
 * `src/test/java/...` — Testes unitários com StepVerifier e testes de integração.
