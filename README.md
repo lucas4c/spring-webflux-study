@@ -1,7 +1,7 @@
 # WebFlux Enterprise API & Distributed Architecture Portfolio
 
 ## 🚀 Sobre o Projeto
-Este projeto consiste em uma **API REST reativa, segura e de alta performance** desenvolvida em **Spring Boot (3.3+) / Spring WebFlux** com **PostgreSQL** e **Redis**, projetada para demonstrar maturidade arquitetural e padrões exigidos em vagas de engenharia de software sênior. 
+Este projeto consiste em uma **API REST reativa, segura e de alta performance** desenvolvida em **Spring WebFlux** com **PostgreSQL** e **Redis**, projetada para estudar arquiteturas e padrões de Engenharia de Software. 
 
 A aplicação adota um modelo de programação não-bloqueante (baseado em Reactor/Netty), garantindo alta vazão (*throughput*) e baixo consumo de recursos sob concorrência extrema.
 
@@ -13,7 +13,7 @@ A aplicação adota um modelo de programação não-bloqueante (baseado em React
 * **Banco de Dados Relacional:** PostgreSQL 16 (Assíncrono via R2DBC)
 * **Cache & Mensageria/Rate Limiting:** Redis 7 (Reativo)
 * **Segurança:** Spring Security WebFlux (Stateless JWT Authentication, BCrypt)
-* **Mensageria & EDA (Fase 4):** RabbitMQ (Event-Driven Architecture)
+* **Mensageria & EDA:** RabbitMQ (Event-Driven Architecture)
 * **Qualidade & Testes:** JUnit 5, Mockito, StepVerifier (Reactor Test), WebTestClient e Testcontainers (PostgreSQL efêmero)
 * **Containerização:** Docker & Docker Compose
 
@@ -36,8 +36,8 @@ A aplicação adota um modelo de programação não-bloqueante (baseado em React
 ---
 
 ## 📊 Estrutura do Repositório
-* `src/main/java/com/drago/webflux_api/controller` — Endpoints REST reativos documentados.
-* `src/main/java/com/drago/webflux_api/service` — Regras de negócio reativas (`Mono`/`Flux`).
+* `src/main/java/com/drago/webflux_api/controller` — Endpoints REST.
+* `src/main/java/com/drago/webflux_api/service` — Regras de negócio.
 * `src/main/java/com/drago/webflux_api/repository` — Repositórios reativos baseados em R2DBC.
 * `src/main/java/com/drago/webflux_api/security` — Configuração de segurança JWT e Filtros de Rate Limiting.
 * `src/test/java/...` — Testes unitários com StepVerifier e testes de integração.
