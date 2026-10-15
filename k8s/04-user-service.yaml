@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: user-service
+spec:
+  replicas: 2 # Mostra que você sabe escalar horizontalmente
+  selector:
+    matchLabels:
+      app: user-service
+  template:
+    metadata:
+      labels:
+        app: user-service
+    spec:
+      containers:
+      - name: user-service
+        image: lucas/user-service:latest # Sua imagem gerada localmente
+        imagePullPolicy: Never # Para o Minikube usar a imagem local
+        env:
+        - name: SPRING_R2DBC_URL
+          value: "r2dbc:postgresql://postgres-db:5432/postgres"
+        - name: SPRING_KAFKA_BOOTSTRAP_SERVERS
+          value: "kafka-broker:9092"
+        ports:
+        - containerPort: 8081
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: user-service
+spec:
+  selector:
+    app: user-service
+  ports:
+    - port: 8081

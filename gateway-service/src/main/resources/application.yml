@@ -1,0 +1,20 @@
+server:
+  port: 8080 # O Gateway será a porta principal
+
+spring:
+  application:
+    name: gateway-service
+  cloud:
+    gateway:
+      routes:
+        # Rota para o User Service
+        - id: user-service-route
+          uri: http://user-service:8081 # Nome do Service no Kubernetes
+          predicates:
+            - Path=/api/users/**
+            
+        # Exemplo de futura rota para notificações
+        - id: notification-service-route
+          uri: http://notification-service:8082
+          predicates:
+            - Path=/api/notifications/**
