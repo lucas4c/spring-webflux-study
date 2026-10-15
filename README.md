@@ -12,8 +12,8 @@ A aplicação adota um modelo de programação não-bloqueante (baseado em React
 * **Framework Principal:** Spring Boot, Spring WebFlux, Spring Data R2DBC
 * **Banco de Dados Relacional:** PostgreSQL 16 (Assíncrono via R2DBC)
 * **Cache & Mensageria/Rate Limiting:** Redis 7 (Reativo)
+* **Mensageria & EDA:** Apache Kafka 3.7 (Modo KRaft - Sem Zookeeper)
 * **Segurança:** Spring Security WebFlux (Stateless JWT Authentication, BCrypt)
-* **Mensageria & EDA:** RabbitMQ (Event-Driven Architecture)
 * **Qualidade & Testes:** JUnit 5, Mockito, StepVerifier (Reactor Test), WebTestClient e Testcontainers (PostgreSQL efêmero)
 * **Containerização:** Docker & Docker Compose
 
@@ -30,14 +30,20 @@ A aplicação adota um modelo de programação não-bloqueante (baseado em React
 ### 3. Resiliência e Proteção contra DDoS (Rate Limiting)
 * Implementação de um filtro de controle de tráfego (`RateLimitFilter`) acoplado ao **Redis reativo**. Utiliza comandos atômicos (`INCR` com expiração por janela de tempo) baseados no IP do cliente, retornando `429 Too Many Requests` de forma não-bloqueante ao atingir o limite estipulado.
 
-### 4. Arquitetura Orientada a Eventos (EDA) & Microsserviços
-* Desacoplamento de domínios através de mensageria assíncrona. No momento em que um usuário é persistido com sucesso no `user-service`, um evento estruturado é publicado em uma exchange/fila do **RabbitMQ**, permitindo que microsserviços satélites (como o `notification-service`) consumam o evento de forma independente e assíncrona para o disparo de notificações.
+### 4. Arquitetura Orientada a Eventos (EDA) & Microsserviços com Kafka
+* Desacoplamento de domínios através de **Apache Kafka no modo KRaft**.
+* **Produtor (`webflux-api`):** No momento em que um usuário é persistido de forma reativa no PostgreSQL, um evento estruturado em JSON é publicado assincronamente no tópico `user.created.topic`.
+* **Consumidor (`notification-service`):** Um microsserviço satélite independente, rodando na porta 8081, que consome o tópico com `auto.offset.reset = earliest`. Isso garante *Event Replay* total e tolerância a falhas: se o serviço de notificações cair, ao retornar ele processará todas as mensagens pendentes (ex: envio simulado de e-mail de boas-vindas) garantindo zero perda de dados.
 
 ---
 
 ## 📊 Estrutura do Repositório
-* `src/main/java/com/drago/webflux_api/controller` — Endpoints REST.
-* `src/main/java/com/drago/webflux_api/service` — Regras de negócio.
-* `src/main/java/com/drago/webflux_api/repository` — Repositórios reativos baseados em R2DBC.
-* `src/main/java/com/drago/webflux_api/security` — Configuração de segurança JWT e Filtros de Rate Limiting.
-* `src/test/java/...` — Testes unitários com StepVerifier e testes de integração.
+* `/webflux-api` — Serviço core (Produtor Kafka, Auth, Users).
+  * `src/main/java/com/drago/webflux_api/controller` — Endpoints REST reativos documentados.
+  * `src/main/java/com/drago/webflux_api/service` — Regras de negócio reativas (`Mono`/`Flux`).
+  * `src/main/java/com/drago/webflux_api/repository` — Repositórios reativos baseados em R2DBC.
+  * `src/main/java/com/drago/webflux_api/security` — Configuração de segurança JWT e Filtros de Rate Limiting.
+  * `src/main/java/com/drago/webflux_api/config` — Configurações explícitas do ProducerFactory do Kafka.
+* `/notification-service` — Microsserviço satélite (Consumidor Kafka).
+  * `src/main/java/com/drago/notification_service/listener` — Lógica de consumo reverso de eventos e *mock* de e-mails.
+  * `src/main/java/com/drago/notification_service/config` — Configurações explícitas do ConsumerFactory e ContainerListener do Kafka.
